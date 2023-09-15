@@ -8,11 +8,6 @@ WDIO tests repo is an example of WDIO tests implemented using PageObject pattern
 npm install
 ```
 
-```Chai
-
-npm install chai --save-dev
-
-```
 
 ## Usage
 
@@ -30,4 +25,4 @@ npm run lint
 
 ISC
 
-// in ored to run test - " npx wdio run ./wdio.conf.js --spec test/specs/test.e2e.js"
+// in order to run test - " npx wdio run ./wdio.conf.js --spec test/specs/test.e2e.js"

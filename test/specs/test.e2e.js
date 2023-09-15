@@ -1,172 +1,193 @@
-
 const chai = require('chai');
 const chai_expect = chai.expect;
 
 const { pages } = require('../pages/Pages');
-const {  Get_prod_data, product_1, product_2, product_11, product_22 } = require('../pages/class.js');
+const {  CheckoutYourInformation } = require('../pages/Checkout.page.js');
+const {  CheckoutOverview } = require('../pages/CheckoutOverview.page.js');
+
+
+ // получаем рандомное число от 0 до 5 
+  function rundom(min, max) {        
+     return Math.floor(Math.random() * (max-1 - min + 1)) + min; 
+ }
 
 
 describe('Test1:', () => {
-    it.only('Perform and verify sorting on the Inventory page', async () => {
-            //Login
+    it('Perform and verify sorting on the Inventory page', async () => {
+        //Login
+        await pages.loginPage.navigate();
+        await pages.loginPage.performLogin('standard_user', 'secret_sauce');
 
+        //получаем список всех товаров   
+        const all_products = await pages.inventoryPage.allInventoruItem
 
-            await pages.loginPage.navigate();
-            await pages.loginPage.performLogin('standard_user', 'secret_sauce');
+        //создаем пустой массив чтобы складывать список цен
+        let first_price_list = []
 
+        for (let index = 1; index <= all_products.length; index++) {
+            // складываем цены в массив
+            let formatInventoryPrice = await (pages.inventoryPage.productPrice(index).getText()) 
+            first_price_list.push(parseFloat (formatInventoryPrice.slice(1))); 
+        }
 
-        //Price (high to low) - выбираем в фильтре значение
-        await $('//option[@value="hilo"]').click()
-
-
-        // получаем цену самого дешевого товара (записываем в переменную)
-        let low_price = await $('(//div[@class="inventory_item_price"])[last()]').getText()
-        //console.log(a);
-
-
-         // получаем цену самого дорогого товара (записываем в переменную)
-        //let a = await $("//span[@class='shopping_cart_badge']").getText()
-        let hig_price = await $('(//div[@class="inventory_item_price"])[1]').getText()
-        //console.log(b);
-
+        //сортируем массив
+        first_price_list.sort(function (a, b) {
+            return a - b;
+        });
 
         // меняем фильтр на Price (low to high)
-        await $('//option[@value="lohi"]').click()
+        await pages.inventoryPage.sortlowToHigh.click()
 
 
-        // получаем цену самого дешевого товара (записываем в переменную)
-        let low_price2 = await $('(//div[@class="inventory_item_price"])[last()]').getText()
-       // console.log(c);
+        //создаем пустой массив чтобы закинуть цены отсортированных товаров
+        let second_price_list = []
 
+        for (let index = 1; index <= all_products.length; index++) {
+            // складываем цены в массив
+            let formatInventoryPrice = await (pages.inventoryPage.productPrice(index).getText())
+            second_price_list.push(parseFloat (formatInventoryPrice.slice(1)));
+        }
 
-       // получаем цену самого дорогого товара (записываем в переменную)
-        let hig_price2 = await $('(//div[@class="inventory_item_price"])[1]').getText()
-       // console.log(d);
-
-
-        // теперь сравниваем поменялись ли местами цены и равны ли они друг другу
-       chai_expect(low_price).to.equal(hig_price2);
-       chai_expect(hig_price ).to.equal(low_price2);
-      
-      
- 
-       
-        
+        //сравниваем 2 массива
+        chai_expect(first_price_list).to.deep.equal(second_price_list);
     });
-
-
 });
 
 describe('Test2', () => {
     it('Add several random products to the Shopping Cart ', async () => {
 
-                    //Login
+        //Login
 
-                    await pages.loginPage.navigate();
-                    await pages.loginPage.performLogin('standard_user', 'secret_sauce');
+        await pages.loginPage.navigate();
+        await pages.loginPage.performLogin('standard_user', 'secret_sauce');
 
-                    //  Add several random products to the Shopping Cart
+        //  Add several random products to the Shopping Cart
 
-                    //получаем рандомное число от 1 до 6    
-                    const randomNumber = Math.floor(Math.random() * 6) + 1;
-                    //добавляем 2 товара в корзину
-                    await pages.inventoryPage.addItemToCartById(randomNumber);
-                    await pages.inventoryPage.addItemToCartById(randomNumber);
+        //получаем список всех товаров   
+        const all_products = await pages.inventoryPage.allInventoruItem
+        let random_first_product = rundom(0, all_products.length)
 
+        // добавляем первый товар в корзину
+        await pages.inventoryPage.addItemToCartById(random_first_product);
 
-                    //проверяем иконку(число) возле корзины
-                    chai_expect(await pages.inventoryPage.getNumberOfItemsInCart()).eql('2');
-
-
-                    //переходим в корзину
-                    await pages.inventoryPage.shopingCart.click();
-
-
-                    //проверяем что мы в корзине
-                    await expect(browser).toHaveUrl('https://www.saucedemo.com/cart.html')
-
-                    //Verify products are displayed correctly (check Name, Description, and Price values)
-                    await expect($('div.inventory_item_name')).toBeDisplayed()
-                    await expect($('div.inventory_item_desc')).toBeDisplayed()
-                    await expect($('div.inventory_item_price')).toBeDisplayed()
+        let random_second_product
+        do {
+            // получаем рандомное число от 0 до 5  НО НЕ равное предыдущему товару
+            random_second_product = rundom(0, all_products.length);
+        } while (random_second_product == random_first_product);
 
 
-                    //второй продукт
-                    await expect($("(//div[@class='inventory_item_name'])[2]")).toBeDisplayed()
-                    await expect($("(//div[@class='inventory_item_desc'])[2]")).toBeDisplayed()
-                    await expect($("(//div[@class='inventory_item_price'])[2]")).toBeDisplayed()
+        // добавляем 2й товар в корзину
+        await pages.inventoryPage.addItemToCartById(random_second_product);
+
+        //проверяем иконку(число) возле корзины
+        chai_expect(await pages.inventoryPage.getNumberOfItemsInCart()).eql('2');
 
 
+        //переходим в корзину
+        await pages.inventoryPage.shopingCart.click();
 
-            
+        //проверяем что мы в корзине
+        await expect(browser).toHaveUrl('https://www.saucedemo.com/cart.html')
+
+        //Verify products are displayed correctly (check Name, Description, and Price values)
+
+        // получаем количество товаров корзине
+         const amount_of_product_in_cart = await pages.shopingCartPage.cartItems
+        
+
+
+         // проверяем наличие полей у всех добавленных товаров
+         for (let indexProduct = 1; indexProduct <= amount_of_product_in_cart.length; indexProduct++) {
+               expect( await pages.shopingCartPage.getItemNameByIndex(indexProduct)).toBeDisplayed()
+               expect( await pages.shopingCartPage.getItemDescByIndex(indexProduct)).toBeDisplayed()
+               expect( await pages.shopingCartPage.getItemPriceByIndex(indexProduct)).toBeDisplayed()
+         }
     });
-
-
 });
 
 describe('Test3:', () => {
-    it('Add several random products to the Shopping Cart', async () => {
-                //Login
-                await pages.loginPage.navigate();
-                await pages.loginPage.performLogin('standard_user', 'secret_sauce');
+    it.only('Add several random products to the Shopping Cart', async () => {
+        //Login
+        await pages.loginPage.navigate();
+        await pages.loginPage.performLogin('standard_user', 'secret_sauce');
 
-                //  Add several random products to the Shopping Cart
+        //  Add several random products to the Shopping Cart
 
-                //получаем рандомное число от 1 до 6
-                const randomNumber = Math.floor(Math.random() * 6) + 1;
-                //добавляем 2 товара в корзину
-                await pages.inventoryPage.addItemToCartById(randomNumber);
-                await pages.inventoryPage.addItemToCartById(randomNumber);
-                // переходим в корзину
-                await pages.inventoryPage.shopingCart.click();
+        //получаем список всех товаров   
+        const allProducts = await pages.inventoryPage.allInventoruItem 
 
-                //получаем все данные(Name, Description, and Price values) из товаров которые в корзине.
-                // складываем данные в экземпляр класса
-                await product_1.get_text(1)
-                await product_2.get_text(2)
+        let randomFirstProduct = rundom(0, allProducts.length)
 
-                //click Checkout
-                await $('#checkout').click()
-                await expect(browser).toHaveUrl('https://www.saucedemo.com/checkout-step-one.html')
+        // добавляем первый товар в корзину
+        await pages.inventoryPage.addItemToCartById(randomFirstProduct);
 
+        let random_second_product
+        do {
+            // получаем рандомное число от 0 до 5  НО НЕ равное предыдущему товару
+            random_second_product = rundom(0, allProducts.length);
+        } while (random_second_product == randomFirstProduct);
 
-                // fill the data
-                await $('#first-name').addValue("standard_user")
-                await $('#last-name').addValue("standard_user")
-                await $('#postal-code').addValue("standard_user")
+        // добавляем 2й товар в корзину
+        await pages.inventoryPage.addItemToCartById(random_second_product);
 
+         // переходим в корзину
+         await pages.inventoryPage.shopingCart.click();
 
-                // click Continue
-                await $('#continue').click()                        
-
-
-                //Verify: products (Name, Description, and Price values)
-
-
-                // стягиваем все данные продуктов из Checkout: Overview
-                console.log(await product_11.get_text(1))
-                console.log(await product_22.get_text(2))
-
-                // сравниваем данные товаров которые в корзине с теми которые попали в Checkout: Overview
-                // сравниваем объекты (экземпляры классов)
-                chai_expect(product_1).to.deep.equal(product_11);
-                chai_expect(product_2).to.deep.equal(product_22);
-             
-
-               // получаем total price in Checkout: Overview
-               let total_1 = await $("//div[@class='summary_info_label summary_total_label']").getText();
-
-               // получаем сумму налогов
-               let tax = await $("//div[@class='summary_tax_label']").getText();
-
-                // суммируем цены всех товаров
-               let total_2 = +product_1.Price_values.slice(1) + +product_2.Price_values.slice(1) + +tax.slice(6)
-
-             // сравниваем полную цену в Checkout: Overview и подсчет суммы товаров
-              chai_expect(total_1.slice(8)).to.equal(total_2.toFixed(2));
+         //получаем все данные(Name, Description, and Price values) из товаров которые в корзине.
+         // складываем данные в переменные
+ 
+         let product1 = await pages.shopingCartPage.getItemByIndex(1)
+         let product2 = await pages.shopingCartPage.getItemByIndex(2)
+        
+          //click Checkout
+          
+         pages.shopingCartPage.clickCheckout() 
+         await expect(browser).toHaveUrl('https://www.saucedemo.com/checkout-step-one.html')
 
 
+        // fill the data
+      
+        let checkoutYourInformation =  new CheckoutYourInformation();
+        await checkoutYourInformation.addValueInCheckoutPage()
+        
 
+        // click Continue
+        await checkoutYourInformation.clickContinue() 
+
+        //Verify: products (Name, Description, and Price values)
+        // стягиваем все данные продуктов из Checkout: Overview
+        let product11 = await pages.shopingCartPage.getItemByIndex(1)
+        let product22 = await pages.shopingCartPage.getItemByIndex(2)
+       
+        // сравниваем данные товаров которые в корзине с теми которые попали в Checkout: Overview
+        // сравниваем объекты 
+          chai_expect(product1).to.deep.equal(product11);
+          chai_expect(product2).to.deep.equal(product22);
+    
+        // получаем total price in Checkout: Overview
+        let checkoutOverview = new CheckoutOverview;
+        let total_1 = await checkoutOverview.totalPriceInCheckoutOverview();
+       
+        // получаем сумму налогов
+        let tax = await checkoutOverview.taxesInCheckoutOverview();
+     
+        // суммируем цены всех товаров
+        let total_2 = +product1.price.slice(1) + +product2.price.slice(1) + +tax.slice(6)
+
+        // сравниваем полную цену в Checkout: Overview и подсчет суммы товаров
+        chai_expect(total_1.slice(8)).to.equal(total_2.toFixed(2));
+    
     });
 
 });
+
+
+
+   
+
+
+
+
+
+ 

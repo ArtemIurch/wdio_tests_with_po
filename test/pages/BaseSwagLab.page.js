@@ -8,6 +8,8 @@ class BaseSwagLabPage extends BasePage {
 
     get shopingCartBadge() { return $('.shopping_cart_badge'); }
 
+
+    
     async getNumberOfItemsInCart() {
         return this.shopingCartBadge.getText();
     }

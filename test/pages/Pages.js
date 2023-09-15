@@ -7,5 +7,6 @@ module.exports = {
         loginPage: new LoginPage(),
         inventoryPage: new InventoryPage(),
         shopingCartPage: new ShopingCartPage(),
+        
     },
 };

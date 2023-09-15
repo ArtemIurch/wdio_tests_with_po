@@ -22,6 +22,25 @@ class ShopingCartPage extends BaseSwagLabPage {
     async removeCartItemById(id) {
         await this.cartItems[id].$(this.removeItemSelector).click();
     }
+
+    async clickCheckout() {
+        await $('#checkout').click();
+    }
+
+
+    getItemNameByIndex(indexProduct) { return $("(//div[@class='inventory_item_name'])[" + indexProduct + "]"); }
+    getItemDescByIndex(indexProduct) { return $("(//div[@class='inventory_item_desc'])[" + indexProduct + "]"); } 
+    getItemPriceByIndex(indexProduct) { return $("(//div[@class='inventory_item_price'])[" + indexProduct + "]"); }  
+
+    async getItemByIndex(indexProduct){
+        let name =  await this.getItemNameByIndex(indexProduct).getText();
+        let description = await this.getItemDescByIndex(indexProduct).getText();
+        let price = await this.getItemPriceByIndex(indexProduct).getText();
+
+        return {name, description, price }
+
+    }
 }
 
 module.exports = { ShopingCartPage };
+
