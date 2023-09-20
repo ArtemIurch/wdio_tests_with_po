@@ -1,13 +1,30 @@
 class CheckoutYourInformation {
-    async addValueInCheckoutPage() {
-        await $('#first-name').addValue("firstname");
-        await $('#last-name').addValue("firstname");
-        await $('#postal-code').addValue(123); 
-   }
+   
 
-   async clickContinue() {
-    await $('#continue').click();
-}
+    get addFirstName() {  
+        return $('#first-name');
+     }
+
+     get addLastName() {  
+        return $('#last-name');
+    }
+    get addPostalCode() {  
+        return $('#postal-code');  
+    }
+
+     async addValueInCheckoutPage(firstname = "firstname", lasttname = "lasttname", code = 123 ) {
+        await this.addFirstName.addValue(firstname);
+        await this.addLastName.addValue(lasttname);
+        await this.addPostalCode.addValue(code);
+     }
+
+     get clickContinue() {  
+        return $('#continue');  
+    }
+
+    async clickContinue() {
+        await this.click.click();
+    }
    
 }
 module.exports = { CheckoutYourInformation };

@@ -28,9 +28,9 @@ class ShopingCartPage extends BaseSwagLabPage {
     }
 
 
-    getItemNameByIndex(indexProduct) { return $("(//div[@class='inventory_item_name'])[" + indexProduct + "]"); }
-    getItemDescByIndex(indexProduct) { return $("(//div[@class='inventory_item_desc'])[" + indexProduct + "]"); } 
-    getItemPriceByIndex(indexProduct) { return $("(//div[@class='inventory_item_price'])[" + indexProduct + "]"); }  
+    get getItemNameByIndex() { return $("(//div[@class='inventory_item_name'])[" + indexProduct + "]"); }
+    get getItemDescByIndex() { return $("(//div[@class='inventory_item_desc'])[" + indexProduct + "]"); } 
+    get getItemPriceByIndex() { return $("(//div[@class='inventory_item_price'])[" + indexProduct + "]"); }  
 
     async getItemByIndex(indexProduct){
         let name =  await this.getItemNameByIndex(indexProduct).getText();

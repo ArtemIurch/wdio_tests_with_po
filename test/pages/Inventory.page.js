@@ -12,8 +12,12 @@ class InventoryPage extends BaseSwagLabPage {
     get allInventoruItem() { return $$('//div[@class="inventory_list"]/child::*'); }
 
     get sortlowToHigh(){return $('//option[@value="lohi"]' )}
+    get highToLow(){return $('//option[@value="hilo"]')}
+    get nameAtoZ(){return $('//option[@value="az"]' )}
+    get nameZtoA(){return $('//option[@value="za"]' )}
     
     productPrice(index){return $( "(//div[@class='inventory_item_price'])[" + index + "]")}
+    productName(index){return $( "(//div[@class='inventory_item_name'])[" + index + "]")}
    
     // get allInventoruItem ...
 
