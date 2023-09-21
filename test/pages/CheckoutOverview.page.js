@@ -1,11 +1,19 @@
 class CheckoutOverview {
 
+    get gettotalPriceInCheckoutOverview() {  
+        return $("//div[@class='summary_info_label summary_total_label']");  
+    }
+
+    get gettaxesInCheckoutOverview() {  
+        return $("//div[@class='summary_tax_label']");  
+    }
+
     async totalPriceInCheckoutOverview(){
-        return await $("//div[@class='summary_info_label summary_total_label']").getText();
+        return this.gettotalPriceInCheckoutOverview.getText();
     }
 
     async taxesInCheckoutOverview(){
-        return await $("//div[@class='summary_tax_label']").getText();
+        return this.gettaxesInCheckoutOverview.getText();
     }
     
    

@@ -9,8 +9,8 @@ module.exports = {
         loginPage: new LoginPage(),
         inventoryPage: new InventoryPage(),
         shopingCartPage: new ShopingCartPage(),
-        CheckoutYourInformation: new CheckoutYourInformation(),
-        CheckoutOverview: new CheckoutOverview()
+        checkoutYourInformation: new CheckoutYourInformation(),
+        checkoutOverview: new CheckoutOverview()
     },
 };
 

@@ -18,12 +18,12 @@ class CheckoutYourInformation {
         await this.addPostalCode.addValue(code);
      }
 
-     get clickContinue() {  
+     get getClickContinue() {  
         return $('#continue');  
     }
 
     async clickContinue() {
-        await this.click.click();
+        await this.getClickContinue.click();
     }
    
 }

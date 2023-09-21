@@ -1,7 +1,17 @@
  // получаем рандомное число от 0 до 5 
  function random(min, max) {        
-    return Math.floor(Math.random() * (max-1 - min + 1)) + min; 
+    return Math.floor(Math.random() * (max - min + 1)) + min; 
 }
 
+function randomize(min, max, exclude) { 
+             
+    let randomNumber 
+        do {
+            randomNumber = Math.floor(Math.random() * (max - min + 1)) + min; 
+          } while (exclude.includes(randomNumber));
+         
+          return randomNumber
+    }
 
-module.exports = { random };
+
+module.exports = { random, randomize };
