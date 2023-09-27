@@ -9,7 +9,7 @@ const { random, randomize } = require('../pages/utils.js');
 
 
 describe('Test1:', () => {
-    it('Perform and verify sorting on the Inventory page - Price (low to high)', async () => {
+    it.only('Perform and verify sorting on the Inventory page - Price (low to high)', async () => {
         //Login
         await pages.loginPage.navigate();
         await pages.loginPage.performLogin('standard_user', 'secret_sauce');
@@ -17,153 +17,49 @@ describe('Test1:', () => {
         //получаем список всех товаров   
         const all_products = await pages.inventoryPage.allInventoruItem
 
-        //создаем пустой массив чтобы складывать список цен
-        let first_price_list = []
+        //создаем пустой массив чтобы складывать список цен и тайтлов товаров
+        let price_list = [] 
+        let product_name_list = [] 
+        
+        for(let i = 1; i <= all_products.length; i++){
+            let formatInventoryPrice = await (pages.inventoryPage.productPrice(i).getText())
+            let formatInventoryName = await (pages.inventoryPage.productName(i).getText()) 
 
-        for (let index = 1; index <= all_products.length; index++) {
-            // складываем цены в массив
-            let formatInventoryPrice = await (pages.inventoryPage.productPrice(index).getText()) 
-            first_price_list.push(parseFloat (formatInventoryPrice.slice(1))); 
+            //складываем данные в пустые массивы
+            price_list.push(parseFloat (formatInventoryPrice.slice(1))); 
+            product_name_list.push(formatInventoryName); 
         }
+     
+        
+        // создаем массив с методами сортировки 
+        let sortOption = [
+            {option: "az", sort: product_name_list.slice().sort((a, b) => a.localeCompare(b))},
+            {option: "za", sort: product_name_list.slice().sort((a, b) => b.localeCompare(a))},
+            {option: "lohi", sort: price_list.slice().sort(function (a, b) {return a - b;})},
+            {option: "hilo", sort: price_list.slice().sort(function (a, b) {return b - a;})}
+        ]
 
-        //сортируем массив
-        first_price_list.sort(function (a, b) {
-            return a - b;
-        });
-        // меняем фильтр на Price (low to high)
-        await pages.inventoryPage.sortlowToHigh.click()
-
-
-        //создаем пустой массив чтобы закинуть цены отсортированных товаров
-        let second_price_list = []
-
-         for (let index = 1; index <= all_products.length; index++) {
-             // складываем цены в массив
-             let formatInventoryPrice = await (pages.inventoryPage.productPrice(index).getText())
-             second_price_list.push(parseFloat (formatInventoryPrice.slice(1)));
-         }
-
-         //сравниваем 2 массива по Price (low to high)
-         chai_expect(first_price_list).to.deep.equal(second_price_list);
-
+    
+        for(let elem  of sortOption){
+        await pages.inventoryPage.sortingDropDownList(elem.option).click()// нажимаем на сортировку
+        
+        let unsorted_list = [] // создаем пустой массив чтобы сложить данные с сайта после того как нажали на сортировку
+        if(elem.option == "az" || elem.option == "za"){
+            for(let i = 1; i <= all_products.length; i++){
+                let formatInventoryName = await (pages.inventoryPage.productName(i).getText()) 
+                unsorted_list.push(formatInventoryName); // складываем в массив 
+            }
+        }
+        else if(elem.option == "lohi" || elem.option == "hilo") {
+            for(let i = 1; i <= all_products.length; i++){
+                let formatInventoryPrice = await (pages.inventoryPage.productPrice(i).getText())    
+                unsorted_list.push(parseFloat (formatInventoryPrice.slice(1))); // складываем в массив
+            }
+        }
+            chai_expect(elem.sort).to.deep.equal(unsorted_list); // через цикл сравниваем отсортированный массив с обычным массивом 
+        }
     });
 });
-
-
-describe('Test1.1:', () => {
-    it('Perform and verify sorting on the Inventory page - Price ( high to low )', async () => {
-        //Login
-        await pages.loginPage.navigate();
-        await pages.loginPage.performLogin('standard_user', 'secret_sauce');
-
-        //получаем список всех товаров   
-        const all_products = await pages.inventoryPage.allInventoruItem
-
-        //создаем пустой массив чтобы складывать список цен
-        let first_price_list = []
-
-        for (let index = 1; index <= all_products.length; index++) {
-            // складываем цены в массив
-            let formatInventoryPrice = await (pages.inventoryPage.productPrice(index).getText()) 
-            first_price_list.push(parseFloat (formatInventoryPrice.slice(1))); 
-        }
-
-         //сортируем массив Price ( high to low )
-         first_price_list.sort(function (a, b) {
-            return b - a;
-        });
-
-        // меняем фильтр на Price ( high to low )
-        await pages.inventoryPage.highToLow.click()
-
-        second_price_list = []
-        for (let index = 1; index <= all_products.length; index++) {
-            // складываем цены в массив
-            let formatInventoryPrice = await (pages.inventoryPage.productPrice(index).getText())
-            second_price_list.push(parseFloat (formatInventoryPrice.slice(1)));
-        }
-
-         //сравниваем 2 массива по Price ( high to low )
-         chai_expect(first_price_list).to.deep.equal(second_price_list);
-
-    });
-});
-
-
-describe('Test1.2:', () => {
-    it('Perform and verify sorting on the Inventory page - Name (A to Z)', async () => {
-        //Login
-        await pages.loginPage.navigate();
-        await pages.loginPage.performLogin('standard_user', 'secret_sauce');
-
-        //получаем список всех товаров   
-        const all_products = await pages.inventoryPage.allInventoruItem
-
-        //создаем пустой массив чтобы складывать список цен
-        let first_productName_list = []
-
-        for (let index = 1; index <= all_products.length; index++) {
-            // складываем цены в массив
-            let formatInventoryPrice = await (pages.inventoryPage.productName(index).getText()) 
-            first_productName_list.push(formatInventoryPrice); 
-        }
-
-        //сортируем массив имен Name (A to Z)
-        first_productName_list.sort();
-
-        // меняем фильтр на Name (A to Z)
-        await pages.inventoryPage.nameAtoZ.click()
-
-
-        let second_productName_list = []
-        for (let index = 1; index <= all_products.length; index++) {
-            // складываем имена в массив
-            let formatInventoryPrice = await (pages.inventoryPage.productName(index).getText())
-            second_productName_list.push(formatInventoryPrice);
-        }
-
-         //сравниваем 2 массива по Name (A to Z)
-         chai_expect(first_productName_list).to.deep.equal(second_productName_list);
-    });
-});
-
-
-describe('Test1.3:', () => {
-    it('Perform and verify sorting on the Inventory page - Name (Z to A)', async () => {
-        //Login
-        await pages.loginPage.navigate();
-        await pages.loginPage.performLogin('standard_user', 'secret_sauce');
-
-        //получаем список всех товаров   
-        const all_products = await pages.inventoryPage.allInventoruItem
-
-        //создаем пустой массив чтобы складывать список цен
-        let first_productName_list = []
-
-        for (let index = 1; index <= all_products.length; index++) {
-            // складываем цены в массив
-            let formatInventoryPrice = await (pages.inventoryPage.productName(index).getText()) 
-            first_productName_list.push(formatInventoryPrice); 
-        }
-
-        //сортируем массив имен Name (Z to A)
-        first_productName_list.sort( (a, b) => b.localeCompare(a))
-
-        // меняем фильтр на Name (Z to A)
-        await pages.inventoryPage.nameZtoA.click()
-
-        second_productName_list = []
-        for (let index = 1; index <= all_products.length; index++) {
-            // складываем имена в массив
-            let formatInventoryPrice = await (pages.inventoryPage.productName(index).getText())
-            second_productName_list.push(formatInventoryPrice);
-        }
-
-         //сравниваем 2 массива по Name (Z to A)
-         chai_expect(first_productName_list).to.deep.equal(second_productName_list);
-    });
-});
-
 
 describe('Test2', () => {
     it('Add several random products to the Shopping Cart ', async () => {
@@ -180,10 +76,9 @@ describe('Test2', () => {
                
         let exclude = [0]
         for (let i = 1; i <= randomm; i++ ){
-            let randomNumber  = randomize(0, all_products.length, exclude)// определив количество товаром (допустим 3) добовляем рандомные 3 товара в козину 
-
-            await pages.shopingCartPage.clickAddtocart(randomNumber)
-
+            let randomNumber  = randomize(0, all_products.length, exclude)// определив количество товаров (допустим 3) добовляем рандомные 3 товара в козину 
+            
+            await pages.shopingCartPage.clickAddtocartByInd(randomNumber)
             await exclude.push(randomNumber)
         }    
 
@@ -192,7 +87,6 @@ describe('Test2', () => {
 
         // переходим в корзину
         await pages.inventoryPage.shopingCart.click();
-        await browser.pause(5000)
                 
         //проверяем что мы в корзине
         await expect(browser).toHaveUrl('https://www.saucedemo.com/cart.html')
@@ -211,7 +105,7 @@ describe('Test2', () => {
    
 
 describe('Test3:', () => {
-    it.only('Add several random products to the Shopping Cart', async () => {
+    it('Add several random products to the Shopping Cart', async () => {
         //Login
         await pages.loginPage.navigate();
         await pages.loginPage.performLogin('standard_user', 'secret_sauce');
@@ -221,62 +115,78 @@ describe('Test3:', () => {
         const all_products = await pages.inventoryPage.allInventoruItem
 
          let randomm = random(0, all_products.length);// выполняем первый рандом с опеределением сколько всего товаров положем в корзину
-               
-        let exclude = [0]
+
+         let productList1 = [];      
+
+        let exclude = [0];
         for (let i = 1; i <= randomm; i++ ){
             let randomNumber  = randomize(0, all_products.length, exclude)// определив количество товаром (допустим 3) добовляем рандомные 3 товара в козину 
 
-            await pages.shopingCartPage.clickAddtocart(randomNumber)
+            await pages.shopingCartPage.clickAddtocartByInd(randomNumber)
+
+            //получаем все данные(Name, Description, and Price values) из товаров которые в inventory page.
+            // складываем данные в массив
+            await productList1.push( await pages.shopingCartPage.getItemByIndex(randomNumber))
 
             await exclude.push(randomNumber)
-        }    
+        }   
+          
+             //сортируем массив
+             await sort(productList1)
+       
+            // переходим в корзину
+            await pages.inventoryPage.shopingCart.click();
 
-        // переходим в корзину
-        await pages.inventoryPage.shopingCart.click();
-      
-        //получаем все данные(Name, Description, and Price values) из товаров которые в корзине.
-        // складываем данные в массив
-        let productList1 = []
-        for (let i = randomm; i >= 1; i--){  
-            productList1.push( await pages.shopingCartPage.getItemByIndex(i))
-        }
+            //получаем все данные(Name, Description, and Price values) из товаров которые в корзине.
+            // складываем данные в массив
+            let productList2 = []
+            for (let i = randomm; i >= 1; i--){  
+                productList2.push( await pages.shopingCartPage.getItemByIndex(i))
+            }
+            await sort(productList2)
 
-        //click Checkout
-        pages.shopingCartPage.clickCheckout() 
-        await expect(browser).toHaveUrl('https://www.saucedemo.com/checkout-step-one.html');
+            // сравниваем данные товаров которые в inventory page  с теми которые попали в корзине
+            // сравниваем массивы 
+            chai_expect(productList1).to.deep.equal(productList2);
 
-          // fill the data
-        await pages.checkoutYourInformation.addValueInCheckoutPage()
+            //click Checkout
+            await pages.shopingCartPage.clickCheckout() 
+            await expect(browser).toHaveUrl('https://www.saucedemo.com/checkout-step-one.html');
 
-        // click Continue
-        await pages.checkoutYourInformation.clickContinue()
+            // fill the data
+            await pages.checkoutYourInformation.addValueInCheckoutPage()
 
-        //Verify: products (Name, Description, and Price values)
-        // стягиваем все данные продуктов из Checkout: Overview
-        let productList2 = []
-        for (let i = randomm ; i >= 1; i--){  
-            productList2.push( await pages.shopingCartPage.getItemByIndex(i))
-        }
-      
-        // сравниваем данные товаров которые в корзине с теми которые попали в Checkout: Overview
-        // сравниваем массивы 
-        chai_expect(productList1).to.deep.equal(productList2);
+            // click Continue
+            await pages.checkoutYourInformation.clickContinue()
 
-        // получаем total price in Checkout: Overview
-        let total_1 = await pages.checkoutOverview.totalPriceInCheckoutOverview()
+            //Verify: products (Name, Description, and Price values)
+            // стягиваем все данные продуктов из Checkout: Overview
+            let productList3 = []
+            for (let i = randomm ; i >= 1; i--){  
+                productList3.push( await pages.shopingCartPage.getItemByIndex(i))
+            }
+        
+            // сравниваем данные товаров которые в корзине с теми которые попали в Checkout: Overview
+            // сравниваем массивы 
+              await sort(productList3)
+              chai_expect(productList1).to.deep.equal(productList3);
 
-        // получаем сумму налогов
-        let tax = await pages.checkoutOverview.taxesInCheckoutOverview()
+            // получаем total price in Checkout: Overview
+            let total_1 = await pages.checkoutOverview.getTotalPriceInCheckoutOverview()
 
-        let productSumPrice = 0;
-        for (let i = 0; i < productList2.length; i++){      
-           productSumPrice += +((productList2[i].price).slice(1))
-        }
-         // суммируем цены всех товаров + налоги
-         let totalSum = productSumPrice + +tax.slice(6)
+            // получаем сумму налогов
+            let tax = await pages.checkoutOverview.getTaxesInCheckoutOverview()
 
-        // сравниваем полную цену в Checkout: Overview и подсчет суммы товаров
-         chai_expect(total_1.slice(8)).to.equal(totalSum.toFixed(2));
+            let productSumPrice = 0;
+            for (let i = 0; i < productList2.length; i++){      
+            productSumPrice += +((productList2[i].price).slice(1))
+            }
+            // суммируем цены всех товаров + налоги
+            let totalSum = productSumPrice + +tax.slice(6)
+
+            // сравниваем полную цену в Checkout: Overview и подсчет суммы товаров
+            chai_expect(total_1.slice(8)).to.equal(totalSum.toFixed(2));
+        
             
     });
 
@@ -287,4 +197,3 @@ describe('Test3:', () => {
 
 
 
- 

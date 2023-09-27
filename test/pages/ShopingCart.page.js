@@ -27,7 +27,7 @@ class ShopingCartPage extends BaseSwagLabPage {
         await $('#checkout').click();
     }
 
-    async clickAddtocart(randomNumber) {
+    async clickAddtocartByInd(randomNumber) {
         await $(`(//div[@class="pricebar"]/button)[${randomNumber}]`).click()
     }
 
@@ -42,7 +42,7 @@ class ShopingCartPage extends BaseSwagLabPage {
 
         return {name, description, price }
     }
-}
+} 
 
 module.exports = { ShopingCartPage };
 

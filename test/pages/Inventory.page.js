@@ -15,7 +15,8 @@ class InventoryPage extends BaseSwagLabPage {
     get highToLow(){return $('//option[@value="hilo"]')}
     get nameAtoZ(){return $('//option[@value="az"]' )}
     get nameZtoA(){return $('//option[@value="za"]' )}
-    
+
+    sortingDropDownList(i){return $(`//select[@class="product_sort_container"]/option[@value="${i}"]`)}
     productPrice(index){return $( "(//div[@class='inventory_item_price'])[" + index + "]")}
     productName(index){return $( "(//div[@class='inventory_item_name'])[" + index + "]")}
    

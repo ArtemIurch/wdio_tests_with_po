@@ -1,21 +1,21 @@
 class CheckoutYourInformation {
    
 
-    get addFirstName() {  
+    get FirstName() {  
         return $('#first-name');
      }
 
-     get addLastName() {  
+     get LastName() {  
         return $('#last-name');
     }
-    get addPostalCode() {  
+    get PostalCode() {  
         return $('#postal-code');  
     }
 
-     async addValueInCheckoutPage(firstname = "firstname", lasttname = "lasttname", code = 123 ) {
-        await this.addFirstName.addValue(firstname);
-        await this.addLastName.addValue(lasttname);
-        await this.addPostalCode.addValue(code);
+     async addValueInCheckoutPage({ firstname = "firstname", lasttname = "lasttname", code = 123}  =  {} ) {
+        await this.FirstName.addValue(firstname);
+        await this.LastName.addValue(lasttname);
+        await this.PostalCode.addValue(code);
      }
 
      get getClickContinue() {  

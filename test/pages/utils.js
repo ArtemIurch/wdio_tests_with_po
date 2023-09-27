@@ -14,4 +14,4 @@ function randomize(min, max, exclude) {
     }
 
 
-module.exports = { random, randomize };
+module.exports = { random, randomize};
