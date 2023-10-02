@@ -18,12 +18,12 @@ class CheckoutYourInformation extends BaseSwagLabPage{
         await this.postalCode.addValue(code);
      }
 
-    get clickContinue() {  
+    get continueBtn() {  
         return $('#continue');  
     }
 
     async clickContinue() {
-        await this.clickContinue.click();
+        await this.continueBtn.click();
     }
    
 }
