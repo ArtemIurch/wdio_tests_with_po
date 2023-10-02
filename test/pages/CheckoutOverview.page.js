@@ -1,4 +1,6 @@
-class CheckoutOverview {
+class CheckoutOverview extends BaseSwagLabPage{
+
+    url = 'https://www.saucedemo.com/checkout-step-two.html';
 
     get totalPriceInCheckoutOverview() {  
         return $("//div[@class='summary_info_label summary_total_label']");  

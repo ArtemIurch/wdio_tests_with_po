@@ -1,29 +1,29 @@
-class CheckoutYourInformation {
+class CheckoutYourInformation extends BaseSwagLabPage{
    
 
-    get FirstName() {  
+    get firstName() {  
         return $('#first-name');
      }
 
-     get LastName() {  
+     get lastName() {  
         return $('#last-name');
     }
-    get PostalCode() {  
+    get postalCode() {  
         return $('#postal-code');  
     }
 
      async addValueInCheckoutPage({ firstname = "firstname", lasttname = "lasttname", code = 123}  =  {} ) {
-        await this.FirstName.addValue(firstname);
-        await this.LastName.addValue(lasttname);
-        await this.PostalCode.addValue(code);
+        await this.firstName.addValue(firstname);
+        await this.lastName.addValue(lasttname);
+        await this.postalCode.addValue(code);
      }
 
-     get getClickContinue() {  
+    get clickContinue() {  
         return $('#continue');  
     }
 
     async clickContinue() {
-        await this.getClickContinue.click();
+        await this.clickContinue.click();
     }
    
 }
