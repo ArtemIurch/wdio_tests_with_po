@@ -1,21 +1,22 @@
+const { BaseSwagLabPage } = require('./BaseSwagLab.page');
 class CheckoutOverview extends BaseSwagLabPage{
 
     url = 'https://www.saucedemo.com/checkout-step-two.html';
 
-    get totalPriceInCheckoutOverview() {  
+    get totalPrice() {  
         return $("//div[@class='summary_info_label summary_total_label']");  
     }
 
-    get taxesInCheckoutOverview() {  
+    get taxes() {  
         return $("//div[@class='summary_tax_label']");  
     }
 
-    async getTotalPriceInCheckoutOverview(){
-        return this.totalPriceInCheckoutOverview.getText();
+    async getTotalPrice(){
+        return this.totalPrice.getText();
     }
 
-    async getTaxesInCheckoutOverview(){
-        return this.taxesInCheckoutOverview.getText();
+    async getTaxes(){
+        return this.taxes.getText();
     }
     
    

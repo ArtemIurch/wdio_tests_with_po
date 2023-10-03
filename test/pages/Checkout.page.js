@@ -1,3 +1,4 @@
+const { BaseSwagLabPage } = require('./BaseSwagLab.page');
 class CheckoutYourInformation extends BaseSwagLabPage{
    
 
@@ -12,7 +13,7 @@ class CheckoutYourInformation extends BaseSwagLabPage{
         return $('#postal-code');  
     }
 
-     async addValueInCheckoutPage({ firstname = "firstname", lasttname = "lasttname", code = 123}  =  {} ) {
+     async fillUserData({ firstname = "firstname", lasttname = "lasttname", code = 123}  =  {} ) {
         await this.firstName.addValue(firstname);
         await this.lastName.addValue(lasttname);
         await this.postalCode.addValue(code);

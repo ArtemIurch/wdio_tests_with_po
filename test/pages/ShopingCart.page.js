@@ -24,18 +24,22 @@ class ShopingCartPage extends BaseSwagLabPage {
     }
 
     async clickCheckout() {
-        await $('#checkout').click();
+        await this.сheckout.click();
     }
 
+    get сheckout(){ return $('#checkout'); }
+
     async clickAddtocartByInd(randomNumber) {
-        await $(`(//div[@class="pricebar"]/button)[${randomNumber}]`).click()
+        await this.addtocartByInd(randomNumber).click()
     }
+
+     addtocartByInd(randomNumber) { return $(`(//div[@class="pricebar"]/button)[${randomNumber}]`); }
 
      getItemNameByIndex(indexProduct) { return $("(//div[@class='inventory_item_name'])[" + indexProduct + "]"); }
      getItemDescByIndex(indexProduct) { return $("(//div[@class='inventory_item_desc'])[" + indexProduct + "]"); } 
      getItemPriceByIndex(indexProduct) { return $("(//div[@class='inventory_item_price'])[" + indexProduct + "]"); }  
 
-    async getItemByIndex(indexProduct){
+    async getItemInfoByIndex(indexProduct){
         let name =  await this.getItemNameByIndex(indexProduct).getText();
         let description = await this.getItemDescByIndex(indexProduct).getText();
         let price = await this.getItemPriceByIndex(indexProduct).getText();

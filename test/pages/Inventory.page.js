@@ -9,14 +9,14 @@ class InventoryPage extends BaseSwagLabPage {
 
     get addItemToCartBtns() { return $$('[id^="add-to-cart"]'); }
 
-    get allInventoruItem() { return $$('//div[@class="inventory_list"]/child::*'); }
+    get allInventoryItem() { return $$('//div[@class="inventory_list"]/child::*'); }
 
     get sortlowToHigh(){return $('//option[@value="lohi"]' )}
     get highToLow(){return $('//option[@value="hilo"]')}
     get nameAtoZ(){return $('//option[@value="az"]' )}
     get nameZtoA(){return $('//option[@value="za"]' )}
 
-    sortingDropDownList(i){return $(`//select[@class="product_sort_container"]/option[@value="${i}"]`)}
+    changeSortingOrder(sortingOrder){return $(`//select[@class="product_sort_container"]/option[@value="${sortingOrder}"]`)}
     productPrice(index){return $( "(//div[@class='inventory_item_price'])[" + index + "]")}
     productName(index){return $( "(//div[@class='inventory_item_name'])[" + index + "]")}
    
