@@ -11,6 +11,8 @@ class ShopingCartPage extends BaseSwagLabPage {
 
     get cartItems() { return $$(this.cartItemSelector); }
 
+    get сheckout(){ return $('#checkout'); }
+
     // async below added to show the function returns a promise
     async getCartItemByName(name) { return $(`${this.cartItemSelector}=${name}`); }
 
@@ -27,14 +29,11 @@ class ShopingCartPage extends BaseSwagLabPage {
         await this.сheckout.click();
     }
 
-    get сheckout(){ return $('#checkout'); }
-
     async clickAddtocartByInd(randomNumber) {
         await this.addtocartByInd(randomNumber).click()
     }
 
      addtocartByInd(randomNumber) { return $(`(//div[@class="pricebar"]/button)[${randomNumber}]`); }
-
      getItemNameByIndex(indexProduct) { return $("(//div[@class='inventory_item_name'])[" + indexProduct + "]"); }
      getItemDescByIndex(indexProduct) { return $("(//div[@class='inventory_item_desc'])[" + indexProduct + "]"); } 
      getItemPriceByIndex(indexProduct) { return $("(//div[@class='inventory_item_price'])[" + indexProduct + "]"); }  
@@ -47,6 +46,5 @@ class ShopingCartPage extends BaseSwagLabPage {
         return {name, description, price }
     }
 } 
-
 module.exports = { ShopingCartPage };
 

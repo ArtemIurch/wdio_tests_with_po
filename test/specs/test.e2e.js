@@ -2,7 +2,7 @@ const chai = require('chai');
 const chai_expect = chai.expect;
 
 const { pages } = require('../pages/Pages');
-const { random, randomize } = require('../pages/utils.js');
+const { random, randomize, addRandomProducts, sort } = require('../pages/utils.js');
 
 beforeEach(async () => {
     //Login
@@ -12,23 +12,22 @@ beforeEach(async () => {
     all_products = await pages.inventoryPage.allInventoryItem
  });
 
- describe('Test1:', async () => {
-
+ beforeAll(async () => {
     let price_list = [];
     let product_name_list = [];
     let sortOption = [];
 
-    it(`Perform and verify sorting`, async () => {
-       for(let i = 1; i <= all_products.length; i++){
-           let formatInventoryPrice = await (pages.inventoryPage.productPrice(i).getText())
-           let formatInventoryName = await (pages.inventoryPage.productName(i).getText()) 
-   
-           //складываем данные в пустые массивы
-           price_list.push(parseFloat (formatInventoryPrice.slice(1))); 
-           product_name_list.push(formatInventoryName); 
-       }
-    }); 
-        
+    for(let i = 1; i <= all_products.length; i++){
+        let formatInventoryPrice = await (pages.inventoryPage.productPrice(i).getText())
+        let formatInventoryName = await (pages.inventoryPage.productName(i).getText()) 
+
+        //складываем данные в пустые массивы
+        price_list.push(parseFloat (formatInventoryPrice.slice(1))); 
+        product_name_list.push(formatInventoryName); 
+    }
+});
+
+ describe('Test1:', async () => {        
         // создаем массив с методами сортировки 
          sortOption = [
             {option: "az",   sort: function() {
@@ -82,13 +81,7 @@ describe('Test2', () => {
 
         let randomm = random(0, all_products.length);// выполняем первый рандом с опеределением сколько всего товаров положем в корзину
                
-        let exclude = [0]
-        for (let i = 1; i <= randomm; i++ ){
-            let randomNumber  = randomize(0, all_products.length, exclude)// определив количество товаров (допустим 3) добовляем рандомные 3 товара в козину 
-            
-            await pages.shopingCartPage.clickAddtocartByInd(randomNumber)
-            await exclude.push(randomNumber)
-        }    
+        await addRandomProducts(randomm)
 
         //проверяем иконку(число) возле корзины 
         chai_expect(await pages.inventoryPage.getNumberOfItemsInCart()).eql(`${randomm}`);
@@ -113,26 +106,15 @@ describe('Test2', () => {
    
 describe('Test3:', () => {
     it('Add several random products to the Shopping Cart', async () => {
-         let randomm = random(0, all_products.length);// выполняем первый рандом с опеределением сколько всего товаров положем в корзину
+           let randomm = random(0, all_products.length);// выполняем первый рандом с опеределением сколько всего товаров положем в корзину
 
-         let productList1 = [];      
+           let productList1 = [];      
 
-        let exclude = [0];
-        for (let i = 1; i <= randomm; i++ ){
-            let randomNumber  = randomize(0, all_products.length, exclude)// определив количество товаром (допустим 3) добовляем рандомные 3 товара в козину 
+           await addRandomProducts(randomm, productList1);
 
-            await pages.shopingCartPage.clickAddtocartByInd(randomNumber)
-
-            //получаем все данные(Name, Description, and Price values) из товаров которые в inventory page.
-            // складываем данные в массив
-            await productList1.push( await pages.shopingCartPage.getItemInfoByIndex(randomNumber))
-
-            await exclude.push(randomNumber)
-        }   
-          
             //сортируем массив
-            await sort(productList1)
-       
+             await sort(productList1)
+
             // переходим в корзину
             await pages.inventoryPage.shopingCart.click();
 
@@ -142,9 +124,10 @@ describe('Test3:', () => {
             for (let i = randomm; i >= 1; i--){  
                 productList2.push( await pages.shopingCartPage.getItemInfoByIndex(i))
             }
+
             await sort(productList2)
 
-            // сравниваем данные товаров которые в inventory page  с теми которые попали в корзине
+            // сравниваем данные товаров которые в inventory page  с теми которые попали в корзину
             // сравниваем массивы 
             chai_expect(productList1).to.deep.equal(productList2);
 
@@ -167,8 +150,8 @@ describe('Test3:', () => {
         
             // сравниваем данные товаров которые в корзине с теми которые попали в Checkout: Overview
             // сравниваем массивы 
-              await sort(productList3)
-              chai_expect(productList1).to.deep.equal(productList3);
+            await sort(productList3)
+            chai_expect(productList1).to.deep.equal(productList3);
 
             // получаем total price in Checkout: Overview
             let total_1 = await pages.checkoutOverview.getTotalPrice()

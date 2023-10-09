@@ -11,7 +11,7 @@ module.exports = {
         shopingCartPage: new ShopingCartPage(),
         checkoutYourInformation: new CheckoutYourInformation(),
         checkoutOverview: new CheckoutOverview()
-    },
+    }
 };
 
 
