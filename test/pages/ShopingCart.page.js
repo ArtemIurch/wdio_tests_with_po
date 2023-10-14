@@ -1,5 +1,6 @@
 const { BaseSwagLabPage } = require('./BaseSwagLab.page');
 
+
 class ShopingCartPage extends BaseSwagLabPage {
     url = '/cart.html';
 
@@ -29,14 +30,14 @@ class ShopingCartPage extends BaseSwagLabPage {
         await this.сheckout.click();
     }
 
-    async clickAddtocartByInd(randomNumber) {
-        await this.addtocartByInd(randomNumber).click()
+    async clickAddToCartByInd(randomNumber) {
+        await this.getAddToCartByIndex(randomNumber).click()
     }
 
-     addtocartByInd(randomNumber) { return $(`(//div[@class="pricebar"]/button)[${randomNumber}]`); }
-     getItemNameByIndex(indexProduct) { return $("(//div[@class='inventory_item_name'])[" + indexProduct + "]"); }
-     getItemDescByIndex(indexProduct) { return $("(//div[@class='inventory_item_desc'])[" + indexProduct + "]"); } 
-     getItemPriceByIndex(indexProduct) { return $("(//div[@class='inventory_item_price'])[" + indexProduct + "]"); }  
+     getAddToCartByIndex(randomNumber) { return $(`(//div[@class="pricebar"]/button)[${randomNumber}]`); }
+     getItemNameByIndex(indexProduct) { return $(`(//div[@class='inventory_item_name'])[${indexProduct}]`); }
+     getItemDescByIndex(indexProduct) { return $(`(//div[@class='inventory_item_desc'])[${indexProduct}]`); } 
+     getItemPriceByIndex(indexProduct) { return $(`(//div[@class='inventory_item_price'])[${indexProduct}]`); }  
 
     async getItemInfoByIndex(indexProduct){
         let name =  await this.getItemNameByIndex(indexProduct).getText();
