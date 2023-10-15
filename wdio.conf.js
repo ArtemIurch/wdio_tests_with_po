@@ -53,7 +53,7 @@ exports.config = {
     //
     capabilities: [{
     // capabilities for local browser web tests
-        browserName: 'microsoftedge', // or "firefox", "microsoftedge", "safari"
+        browserName: 'firefox', // or "firefox", "microsoftedge", "safari"
     }],
     //
     // ===================

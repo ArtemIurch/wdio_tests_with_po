@@ -2,8 +2,8 @@ const chai = require('chai');
 const chai_expect = chai.expect;
 
 const { pages } = require('../pages/Pages');
+const { addRandomProducts } = require('../pages/commonStep.js');
 const { randomnumber } = require('../pages/utils.js');
-const { onnee } = require('../pages/Inventory.page.js');
 
 //сортировка массивов 
 function sort(productArray){
@@ -20,8 +20,7 @@ beforeEach(async () => {
      //получаем список всех товаров   
     all_products = await pages.inventoryPage.allInventoryItem
  });
-/* ... */
-/*
+
  beforeAll(async () => {
     let price_list = [];
     let product_name_list = [];
@@ -36,22 +35,8 @@ beforeEach(async () => {
         product_name_list.push(formatInventoryName); 
     }
 });
-*/
 
  describe('Test1:', async () => { 
-    let price_list = [];
-    let product_name_list = [];
-    let sortOption = [];   
-    it('verification  Total Price and verification: products (Name, Description, and Price values) ',  async() => {
-    for(let i = 1; i <= all_products.length; i++){
-        let formatInventoryPrice = await (pages.inventoryPage.productPrice(i).getText())
-        let formatInventoryName = await (pages.inventoryPage.productName(i).getText()) 
-
-        //складываем данные в пустые массивы
-        price_list.push(parseFloat (formatInventoryPrice.slice(1))); 
-        product_name_list.push(formatInventoryName); 
-    }
-});
         // создаем массив с методами сортировки 
          sortOption = [
             {option: "az",   sort: function() {
@@ -99,22 +84,16 @@ beforeEach(async () => {
 });
 
 describe('Test2', () => {
-    it.only('verification  Total Price and verification: products (Name, Description, and Price values) ',  async() => {
-
-        pages.inventoryPage.one()
-        console.log(pages);
-
-       pages.inventoryPage.o
-        
-/*
+    it('verification  Total Price and verification: products (Name, Description, and Price values) ',  async() => {
+       
         let random = randomnumber(0, all_products.length);// выполняем первый рандом с опеределением сколько всего товаров положем в корзину
 
-        let totalInformationofProduct = await pages.inventoryPage.addRandomProducts(random); // складываем масив данных с продуктами которые попадут в корзину
+        let totalInformationofProduct = await addRandomProducts(random); // складываем масив данных с продуктами которые попадут в корзину
                
         sort(totalInformationofProduct)// сортируем массив 
          
         //проверяем иконку(число) возле корзины 
-       // chai_expect(await pages.inventoryPage.getNumberOfItemsInCart()).eql(`${random}`);
+        chai_expect(await pages.inventoryPage.getNumberOfItemsInCart()).eql(`${random}`);
 
         // переходим в корзину
         await pages.inventoryPage.shopingCart.click();
@@ -140,10 +119,10 @@ describe('Test2', () => {
            sort(expected_productList)// сортируем массив чтобы струкрура была идентичной totalInformationofProduct
 
            chai_expect(totalInformationofProduct).to.deep.equal(expected_productList);// сравниваем 2 массива 
-           */
+          
     });
 
-    
+   
 });
    
 describe('Test3:', () => {
@@ -215,6 +194,3 @@ describe('Test3:', () => {
     });
 
 });
-
-
-
