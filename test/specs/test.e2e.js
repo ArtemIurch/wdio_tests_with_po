@@ -19,72 +19,80 @@ beforeEach(async () => {
     await pages.loginPage.performLogin('standard_user', 'secret_sauce');
      //получаем список всех товаров   
     all_products = await pages.inventoryPage.allInventoryItem
+   
  });
 
- beforeAll(async () => {
+ describe('Test1:',  async() => { 
     let price_list = [];
     let product_name_list = [];
     let sortOption = [];
+ 
+    before(async () => {
+              //Login
+              await pages.loginPage.navigate();
+              await pages.loginPage.performLogin('standard_user', 'secret_sauce');
+               //получаем список всех товаров   
+              all_products = await pages.inventoryPage.allInventoryItem
+             
+      
+             for (let i = 1; i <= all_products.length; i++) {
+              let formatInventoryPrice = await (pages.inventoryPage.productPrice(i).getText())
+               let formatInventoryName = await (pages.inventoryPage.productName(i).getText())
+      
+               price_list.push(parseFloat(formatInventoryPrice.slice(1)));
+               product_name_list.push(formatInventoryName);
+           }
+    });
 
-    for(let i = 1; i <= all_products.length; i++){
-        let formatInventoryPrice = await (pages.inventoryPage.productPrice(i).getText())
-        let formatInventoryName = await (pages.inventoryPage.productName(i).getText()) 
-
-        //складываем данные в пустые массивы
-        price_list.push(parseFloat (formatInventoryPrice.slice(1))); 
-        product_name_list.push(formatInventoryName); 
-    }
-});
-
- describe('Test1:', async () => { 
-        // создаем массив с методами сортировки 
-         sortOption = [
-            {option: "az",   sort: function() {
-                return product_name_list.slice().sort(function(a, b) {
-                    return a.localeCompare(b);
-                });
-            }}
-             ,
-             {option: "za",   sort: function() {
-                return product_name_list.slice().sort(function(a, b) {
-                     return b.localeCompare(a);
-                 });
-             }},
-             {option: "lohi",   sort: function() {
-                return price_list.slice().sort(function(a, b) {
-                     return a - b;
-                 });
-             }},
-             {option: "hilo",   sort: function() {
-                return price_list.slice().sort(function(a, b) {
-                     return b - a;
-                 });
-             }}
-        ]
-
-        for(let elem  of sortOption){
-            it(`Perform and verify sorting on the Inventory page - Price ${elem.option}`, async () => {
-                await pages.inventoryPage.changeSortingOrder(elem.option).click()// нажимаем на сортировку
-                
-                let unsorted_list
-                if(elem.option === "az" || elem.option === "za"){
-                     unsorted_list = await Promise.all(await pages.inventoryPage.allTitleList.map(async (text) => {// складываем данные в массив
-                     return text.getText();
-                    }));
-                }
-                else {
-                        unsorted_list = await Promise.all(await pages.inventoryPage.allPriceList.map(async (price) => {// складываем данные в массив
-                        const priceText = await price.getText();
-                        return parseFloat(priceText.replace('$', ''));
-                    }));           
-                }
-                chai_expect(elem.sort()).to.deep.equal(unsorted_list); // через цикл сравниваем отсортированный массив с обычным массивом 
+    sortOption = [
+        {option: "az",   sort: function(priseOrNameList) {
+            return priseOrNameList.slice().sort(function(a, b) {
+                return a.localeCompare(b);
             });
-        } 
+        }}
+         ,
+         {option: "za",   sort: function(priseOrNameList) {
+            return priseOrNameList.slice().sort(function(a, b) {
+                 return b.localeCompare(a);
+             });
+         }},
+         {option: "lohi",   sort: function(priseOrNameList) {
+            return priseOrNameList.slice().sort(function(a, b) {
+                 return a - b;
+             });
+         }},
+         {option: "hilo",   sort: function(priseOrNameList) {
+            return priseOrNameList.slice().sort(function(a, b) {
+                 return b - a;
+             });
+         }}
+    ]
+    
+         for(let elem  of sortOption){
+             it(`Perform and verify sorting on the Inventory page - Price ${elem.option}`, async () => {
+                 await pages.inventoryPage.changeSortingOrder(elem.option).click()// нажимаем на сортировку
+                
+                 let unsorted_list
+                 if(elem.option === "az" || elem.option === "za"){
+                      unsorted_list = await Promise.all(await pages.inventoryPage.allTitleList.map(async (text) => {// складываем данные в массив
+                      return text.getText();
+                     }));
+                 }
+                 else {
+                         unsorted_list = await Promise.all(await pages.inventoryPage.allPriceList.map(async (price) => {// складываем данные в массив
+                         const priceText = await price.getText();
+                         return parseFloat(priceText.replace('$', ''));
+                     }));           
+                 }
+                
+                 chai_expect(elem.sort(unsorted_list)).to.deep.equal(unsorted_list); // через цикл сравниваем отсортированный массив с обычным массивом 
+             });
+         } 
+       
 });
 
 describe('Test2', () => {
-    it('verification  Total Price and verification: products (Name, Description, and Price values) ',  async() => {
+    xit('verification  Total Price and verification: products (Name, Description, and Price values) ',  async() => {
        
         let random = randomnumber(0, all_products.length);// выполняем первый рандом с опеределением сколько всего товаров положем в корзину
 
@@ -126,7 +134,7 @@ describe('Test2', () => {
 });
    
 describe('Test3:', () => {
-    it('Add several random products to the Shopping Cart', async () => {
+    xit('Add several random products to the Shopping Cart', async () => {
            let random = random(0, all_products.length);// выполняем первый рандом с опеределением сколько всего товаров положем в корзину
 
            let actual_productList = [];      

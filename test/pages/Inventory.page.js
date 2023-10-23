@@ -17,11 +17,11 @@ class InventoryPage extends BaseSwagLabPage {
     get nameZtoA(){return $('//option[@value="za"]' )}
 
     get allPriceList(){return $$('//div[@class="inventory_item_price"]');}
-    get allTitleList(){return $$('//div[@class="inventory_item_name"]');}
+    get allTitleList(){return $$('//div[@class="inventory_item_name "]');}
 
     changeSortingOrder(sortingOrder){return $(`//select[@class="product_sort_container"]/option[@value="${sortingOrder}"]`)}
     productPrice(index){return $( `(//div[@class='inventory_item_price'])[${index}]`)}
-    productName(index){return $( `(//div[@class='inventory_item_name'])[${index}]`)}
+    productName(index){return $( `(//div[@class='inventory_item_name '])[${index}]`)}
    
     // get allInventoruItem ...
 
