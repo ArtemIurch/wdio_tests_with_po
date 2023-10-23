@@ -1,6 +1,8 @@
 const { BasePage } = require('./Base.page');
 
+
 class LoginPage extends BasePage {
+     
     get userName() { return $('#user-name'); }
 
     get password() { return $('#password'); }
